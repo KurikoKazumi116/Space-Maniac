@@ -1,84 +1,77 @@
 import pygame,time
+from pygame.locals import *
 from sys import exit
 
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
+clock = pygame.time.Clock()
 screen = pygame.display.set_mode((800,600))
+pygame.display.set_caption('Space-Mania')
 
-pygame.display.set_caption('SPACE-MANIA')
 fonts = pygame.font.Font('assets/UI/Pixeltype.ttf',50)
+
 #screens
 Starter_menu = True
 beginCut = False
-gameLVL1 = False
-gameLVL2 = False
-game_ending = False
+Win = False
+Loseanim = False
 game_over = False
 
-reply = pygame.image.load('assets/UI/REPLY.png')
-reply_rect = reply.get_rect(center = (400,300))
-loc = pygame.image.load('assets/UI/LOCATOR.png')
+#lazer
+red_laz = pygame.image.load('assets/UI/')
 
-def chatUI():
-    screen.blit(reply,reply_rect)
-    screen.blit(loc, (400,44))
-    pygame.mixer.music.load('music/JustAChat.ogg')
-    pygame.mixer.music.set_volume(0.5)
-    pygame.mixer.music.play(-1)
-def chat():
-    list = 0
-    for i in range (0,5):
-        fonts.render(CutTexts[int(list)], 1, 'green')
-        time.sleep(3)
-        list += 1
+
 
 def gameinfo():
     lives_label = fonts.render(f'Lives: {lives}', 1, (255,225,255))
-    level_label = fonts.render(f'Level: {level}',1,(255,255,255))
+    level_label = fonts.render(f'Time: {tme}',1,(255,255,255))
     screen.blit(level_label,(10,10))
     screen.blit(lives_label,(100,100))
 
+def player():
+    player = pygame.image.load('assets/player/Playa.png')
+
+def Opening():
+    pygame.mixer.music.load('music/SafeZone.ogg')
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+    screen.blit()
 
 #variables
 FPS = 60
-level = 1
+tme = 120 #IN SECONDSSS
 lives = 5
+Val = 0
 
-player = pygame.image.load('assets/player/0.png')
-player_rect = player.get_rect(center = (20,20))
-clock = pygame.time.Clock()
 
-CutTexts = [
-    "Evening" #0
-    "Haha. I guess so." #1
-    "..." #2
-    "..." #3
-    "Earth has been taken over." #4
-    "All COMMS will be disconnected." #5
+#IK this is crude XD
+a = 'The year is 3020. '
+b = 'You are an astronaut on Mars.'
+c = 'But, you are loosing oxygen fast!'
+d = 'Defeat enemy spaceships that get in your way!'
+e = 'Grab Yellow orbs to speed up!'
+f = 'You have 2 minutes.'
+g = 'Press SPACE to begin.'
 
-]
+
+CutTexts = [a,b,c,d,e,f,g]
 
 
 while True:
+    pygame.display.update() 
+    clock.tick(FPS)
+
     if Starter_menu: #OPENING SCREEN (ADD ANIMS + HOVER MECHS)
+        Opening()
+
         
     
-    
-    
-    
-    
-    
-    
-    #KEYBINDSSSS
-    for event in pygame.event.get():
+    for event in pygame.event.get():#KEYBINDSSSS
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if reply_rect.collidepoint == (event.pos):
-                if beginCut:   
-    pygame.display.update()
-    clock.tick(FPS)
-            
-
+                Val += 1
+                pygame.mixer.Sound()
