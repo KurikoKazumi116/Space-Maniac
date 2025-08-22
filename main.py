@@ -19,6 +19,15 @@ Loseanim = False
 game_over = False
 credits = False
 
+# track music state
+music_playing = False  
+
+# music function
+def play_music(filename, loop=-1, volume=0.5):
+    pygame.mixer.music.load(filename)
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play(loop)   # -1 = infinite loop
+
 #lazer
 
 #red_laz = pygame.image.load('assets/UI/red_laz.png')
@@ -38,16 +47,18 @@ def player():
 def creds():
     global credits
     if not credits:
-        fadeout()
+        fadein()
         first = pygame.image.load('assets/opening/first.png')
         screen.blit(first, (100, 100))
         pygame.display.update()
-        pygame.time.delay(5000)
+        pygame.time.delay(3000)
         fadeout()
         second = pygame.image.load('assets/opening/sec.png')
         screen.blit(second, (120, 90))
+        pygame.time.delay(3000)
+        
         pygame.display.update()
-        pygame.time.delay(5000)
+        
         credits = True
     
     return credits
@@ -55,11 +66,8 @@ def creds():
 
 
 def Opening():  # blit this on the screen only after creds are loaded
-    pygame.mixer.music.load('music/SafeZone.mp3')
-    pygame.mixer.music.set_volume(0.5)
-    pygame.mixer.music.play()
-    #title = pygame.image.load('assets/opening/title.png')
-    #screen.blit(title, (400, 200))
+    title = pygame.image.load('assets/opening/LOGO.png')
+    screen.blit(title, (20, 10))
     pygame.display.update()
     pygame.time.delay(2000)
     start = pygame.image.load('assets/opening/start_nor.png')
@@ -70,34 +78,21 @@ def Opening():  # blit this on the screen only after creds are loaded
 
 
 def fadein():
-    alpha = 0
-    fade_speed = 3
-    fading_in = True
-    while fading_in:
-        screen.fill((0, 0, 0))
-        alpha += fade_speed
-        if alpha >= 255:
-            alpha = 255
-            fading_in = False
-        surface = pygame.Surface((800, 600))
-        surface.set_alpha(alpha)
-        screen.blit(surface, (0, 0))
+    fade_surface = pygame.Surface((800, 600))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(255, -1, -5):
+        fade_surface.set_alpha(alpha)
+        screen.blit(fade_surface, (0, 0))
         pygame.display.update()
         clock.tick(60)
+   
 
 def fadeout():
-    alpha = 255
-    fade_speed = 100
-    fading_out = True
-    while fading_out:
-        screen.fill((0, 0, 0))
-        alpha -= fade_speed
-        if alpha <= 0:
-            alpha = 0
-            fading_out = False
-        surface = pygame.Surface((800, 600))
-        surface.set_alpha(alpha)
-        screen.blit(surface, (0, 0))
+    fade_surface = pygame.Surface((800, 600))
+    fade_surface.fill((0, 0, 0))
+    for alpha in range(0, 255, 5):
+        fade_surface.set_alpha(alpha)
+        screen.blit(fade_surface, (0, 0))
         pygame.display.update()
         clock.tick(60)
 
@@ -140,26 +135,25 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if Starter_menu:
-                if event.key == pygame.K_a:
-                    print("You pressed A in the starter menu!")
-
-    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                if Starter_menu:
+                    print("WAZZZAP")
 
     if Starter_menu:
-        
         creds()  # OPENING SCREEN (ADD ANIMS)
         if credits:
             screen.fill((0,0,0))
+            if not music_playing:   #ONLY ONCE
+                play_music('music/SafeZone.mp3')
+                music_playing = True
             Opening()
 
     elif Game:
-        
         screen.fill((0, 0, 0))
         gameinfo()
         screen.blit(player(), (350, 400))
         text()
 
     pygame.display.update()
-    clock.tick(FPS)
+    clock.tick(60)
