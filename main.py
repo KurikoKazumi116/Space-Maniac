@@ -13,7 +13,7 @@ fonts = pygame.font.Font('assets/UI/Pixeltype.ttf',50)
 
 #screens
 Starter_menu = True
-beginCut = False
+Game = False
 Win = False
 Loseanim = False
 game_over = False
@@ -32,17 +32,50 @@ def gameinfo():
 def player():
     player = pygame.image.load('assets/player/Playa.png')
 
-def Opening():
-    pygame.mixer.music.load('music/SafeZone.ogg')
+def creds():
+    pygame.image.load()
+
+def Opening(): #blit this on the screen only after creds are loaded
+    pygame.mixer.music.load('music/SafeZone.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
-    screen.blit()
+    title = screen.blit('assets/UI/title.png',(400,200))
+    pygame.time.delay(2)
+    start = screen.blit('assets/UI/start.png')
+    start_rect = start.get_rect(center = ())
+
+def fade():
+    screen.fill((0, 0, 0)) 
+    screen.set_alpha(int(alpha))
+    alpha = 0
+    fading_out = True
+    fade_speed = 5
+
+    if fading_out:
+        alpha += fade_speed 
+        if alpha >= 255:
+            alpha = 255
+            fading_out = False  
+        screen.set_alpha(alpha) 
+
+def text():
+    value = 0
+    for i in CutTexts:
+        word = fonts.render([value])
+        screen.blit(word,(100,100))
+        pygame.time.delay(30)
+        value +=1
+        if value == 6:
+            break
+               
+
+    
 
 #variables
 FPS = 60
 tme = 120 #IN SECONDSSS
 lives = 5
-Val = 0
+
 
 
 #IK this is crude XD
@@ -54,24 +87,35 @@ e = 'Grab Yellow orbs to speed up!'
 f = 'You have 2 minutes.'
 g = 'Press SPACE to begin.'
 
-
 CutTexts = [a,b,c,d,e,f,g]
 
+#hover mechs 
+mouse_pos = pygame.mouse.get_pos()
 
+#actual game
 while True:
-    pygame.display.update() 
-    clock.tick(FPS)
-
-    if Starter_menu: #OPENING SCREEN (ADD ANIMS + HOVER MECHS)
-        Opening()
-
-        
     
+
     for event in pygame.event.get():#KEYBINDSSSS
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if reply_rect.collidepoint == (event.pos):
-                Val += 1
+            if start_rect.collidepoint == (event.pos):
+                fade()
+                Starter_menu = False
+                Game  = True
+
+                
                 pygame.mixer.Sound()
+
+    if Starter_menu:
+        fade() #OPENING SCREEN (ADD ANIMS)
+        
+
+    if Game:
+
+
+
+    pygame.display.update() 
+    clock.tick(FPS)
