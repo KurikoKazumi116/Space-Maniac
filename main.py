@@ -23,10 +23,10 @@ credits = False
 music_playing = False  
 
 # music function
-def play_music(filename, loop=-1, volume=0.5):
+def play_music(filename,vol = 0.5,loop = -1):
     pygame.mixer.music.load(filename)
-    pygame.mixer.music.set_volume(volume)
-    pygame.mixer.music.play(loop)   # -1 = infinite loop
+    pygame.mixer.music.set_volume(vol)
+    pygame.mixer.music.play(loop)   # -1 !!!
 
 #lazer
 
@@ -53,9 +53,7 @@ def creds():
         pygame.display.update()
         pygame.time.delay(3000)
         fadeout()
-        second = pygame.image.load('assets/opening/sec.png')
-        screen.blit(second, (120, 90))
-        pygame.time.delay(3000)
+        
         
         pygame.display.update()
         
@@ -65,17 +63,8 @@ def creds():
 
 
 
-def Opening():  # blit this on the screen only after creds are loaded
-    title = pygame.image.load('assets/opening/LOGO.png')
-    screen.blit(title, (20, 10))
-    pygame.display.update()
-    pygame.time.delay(2000)
-    start = pygame.image.load('assets/opening/start_nor.png')
-    start_rect = start.get_rect(center=(200, 400))
-    screen.blit(start, start_rect)
-    pygame.display.update()
-    return start_rect
-
+ 
+    
 
 def fadein():
     fade_surface = pygame.Surface((800, 600))
@@ -101,12 +90,18 @@ def fadeout():
 def text():
     for i, line in enumerate(CutTexts):
         word = fonts.render(line, 1, (255, 255, 255))
-        screen.blit(word, (100, 100 + i * 60))
+        screen.blit(word, (90, 100 + i * 60))
         pygame.display.update()
-        pygame.time.delay(300)
-        if i == 6:
-            break
+        pygame.time.delay(3000)
+        if line == 6:
+            print("hello")
 
+
+bg = pygame.image.load('assets/opening/openingbg.png')
+bg_rect = bg.get_rect(center=(20, 0))
+bg_speed = .1
+moving_down = True   # directions 
+music_playing = False
 
 #variables
 FPS = 60
@@ -128,26 +123,56 @@ CutTexts = [a, b, c, d, e, f, g]
 mouse_pos = pygame.mouse.get_pos()
 
 # actual game
-start_rect = None  
+start_rect = None
 
+#KEYBINDSSSS
 while True:
-    for event in pygame.event.get():  # KEYBINDSSSS
+    for event in pygame.event.get(): 
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 if Starter_menu:
-                    print("WAZZZAP")
-
+                    print("working")
+                    
+                    screen.fill('black')
+                    Starter_menu = False
+                    music_playing = False
+                    if not music_playing:
+                        play_music('music/JustAChat.ogg')
+                        music_playing = True  
+                    text()
+    
     if Starter_menu:
         creds()  # OPENING SCREEN (ADD ANIMS)
+
         if credits:
-            screen.fill((0,0,0))
-            if not music_playing:   #ONLY ONCE
+            screen.fill((0, 0, 0))
+
+            # Play music only once
+            if not music_playing:
                 play_music('music/SafeZone.mp3')
                 music_playing = True
-            Opening()
+
+            # Background animation
+            if moving_down:
+                bg_rect.y += bg_speed
+                if bg_rect.bottom >= 1000:  # hit lower bound
+                    moving_down = False
+            else:
+                bg_rect.y -= bg_speed
+                if bg_rect.top <= 10:     # hit upper bound
+                    moving_down = True
+
+            screen.blit(bg, bg_rect)
+
+            # Draw start + logo
+            start = pygame.image.load('assets/opening/start_nor.png')
+            screen.blit(start, (300, 300))
+            title = pygame.image.load('assets/opening/LOGO.png')
+            screen.blit(title, (140, 80))
+
 
     elif Game:
         screen.fill((0, 0, 0))
