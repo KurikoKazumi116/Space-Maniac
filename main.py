@@ -18,7 +18,7 @@ Win = False
 Loseanim = False
 game_over = False
 credits = False
-
+space = False
 # track music state
 music_playing = False  
 
@@ -34,8 +34,8 @@ def play_music(filename,vol = 0.5,loop = -1):
 
 
 def gameinfo():
-    lives_label = fonts.render(f'Lives: {lives}', 1, (255, 225, 255))
-    level_label = fonts.render(f'Time: {tme}', 1, (255, 255, 255))
+    lives_label = fonts.render(f'Location: {location}', 1, (255, 225, 255))
+    level_label = fonts.render(f'T- {tme} seconds', 1, (255, 255, 255))
     screen.blit(level_label, (10, 10))
     screen.blit(lives_label, (100, 100))
 
@@ -61,11 +61,6 @@ def creds():
     
     return credits
 
-
-
- 
-    
-
 def fadein():
     fade_surface = pygame.Surface((800, 600))
     fade_surface.fill((0, 0, 0))
@@ -88,36 +83,46 @@ def fadeout():
 
 
 def text():
+    global space
+    global Starter_menu
     for i, line in enumerate(CutTexts):
         word = fonts.render(line, 1, (255, 255, 255))
-        screen.blit(word, (90, 100 + i * 60))
+        screen.blit(word, (20, 100 + i * 60))
         pygame.display.update()
-        pygame.time.delay(3000)
-        if line == 6:
+        pygame.time.delay(2000)
+        if i == 7:
             print("hello")
+            space = True
+            Starter_menu = False
+            
+            
 
 
 bg = pygame.image.load('assets/opening/openingbg.png')
-bg_rect = bg.get_rect(center=(20, 0))
-bg_speed = .1
+bg_rect = bg.get_rect(center=(200, 200))
+
+
 moving_down = True   # directions 
 music_playing = False
 
 #variables
 FPS = 60
 tme = 120  # IN SECONDS
-lives = 5
+
+location = 'Neptune'
+
 
 #IK this is crude XD
 a = 'The year is 3020. '
-b = 'You are an astronaut on Mars.'
-c = 'But, you are losing oxygen fast!'
-d = 'Defeat enemy spaceships that get in your way!'
-e = 'Grab Yellow orbs to speed up!'
-f = 'You have 2 minutes.'
-g = 'Press SPACE to begin.'
+b = 'You are doing research.. '
+c = 'in the outer solar system, when...'
+d = 'An asteroid hits your spaceship!'
+e = 'You are loosing oxygen at a rapid rate'
+f = 'Avoid and shoot asteroids to get back to Earth!'
+g = 'You have T-2 minutes.'
+h = '     Press SPACE to begin.'
 
-CutTexts = [a, b, c, d, e, f, g]
+CutTexts = [a, b, c, d, e, f, g, h]
 
 #hover mechs
 mouse_pos = pygame.mouse.get_pos()
@@ -134,18 +139,37 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 if Starter_menu:
+                    clck = pygame.mixer.Sound('music/24.wav')
+                    clck.play()
+                    music_playing = False
                     print("working")
                     
+                    pygame.time.delay(300)
+                    fadeout()
                     screen.fill('black')
+                    pygame.time.delay(600)
                     Starter_menu = False
-                    music_playing = False
+                    
                     if not music_playing:
                         play_music('music/JustAChat.ogg')
                         music_playing = True  
                     text()
+                    Starter_menu = False
+
+            if event.key == pygame.K_SPACE:
+
+                if space:
+                    print("THIS THING WORKDS")
+                    Starter_menu = False
+                    pygame.time.delay(20)
+                    fadeout()
+                    
+                    
+                    Game = True
     
     if Starter_menu:
-        creds()  # OPENING SCREEN (ADD ANIMS)
+        creds()
+          # OPENING SCREEN (ADD ANIMS)
 
         if credits:
             screen.fill((0, 0, 0))
@@ -154,19 +178,7 @@ while True:
             if not music_playing:
                 play_music('music/SafeZone.mp3')
                 music_playing = True
-
-            # Background animation
-            if moving_down:
-                bg_rect.y += bg_speed
-                if bg_rect.bottom >= 1000:  # hit lower bound
-                    moving_down = False
-            else:
-                bg_rect.y -= bg_speed
-                if bg_rect.top <= 10:     # hit upper bound
-                    moving_down = True
-
             screen.blit(bg, bg_rect)
-
             # Draw start + logo
             start = pygame.image.load('assets/opening/start_nor.png')
             screen.blit(start, (300, 300))
@@ -175,10 +187,21 @@ while True:
 
 
     elif Game:
+        pygame.time.delay(20)
         screen.fill((0, 0, 0))
         gameinfo()
+        if tme <= 120:
+            pygame.time.delay(1000)
+            tme -= 1
+        elif tme <=0:
+            tme = 0
+            game = False
+            game_over = True
         screen.blit(player(), (350, 400))
-        text()
+        
+    elif game_over:
+        game_over()
+
 
     pygame.display.update()
     clock.tick(60)
