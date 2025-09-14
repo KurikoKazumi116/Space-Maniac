@@ -89,23 +89,23 @@ def text():
             
 def winscr():
     winbg = pygame.image.load('assets/UI/win.png')
-    screen.blit(winbg,(100,0))  
+    screen.blit(winbg,(0,0))  
     Wmes = fonts.render('You have reached Earth!',1, (255,255,255))
-    screen.blit(Wmes,(90, 100))  
+    screen.blit(Wmes,(150, 100))  
     Restart = fonts.render('Press [R] to reset',1, (255,255,255))
     
     
-    screen.blit(Restart,(200, 300))
+    screen.blit(Restart,(100, 300))
     
     pygame.time.delay(20)
 def losescr():            
     losebg = pygame.image.load('assets/UI/lose.png')
-    screen.blit(losebg,(0,0))  
+    screen.blit(losebg,(-100,0))  
     Lmes = fonts.render('You have sustained too much damage.',1, (255,255,255))
     Restart = fonts.render('Press [R] to reset',1, (255,255,255))
     
-    screen.blit(Lmes,(200, 100))
-    screen.blit(Restart,(200, 300))
+    screen.blit(Lmes,(10, 100))
+    screen.blit(Restart,(100, 300))
     
     pygame.time.delay(20)
     
@@ -130,6 +130,8 @@ asteroids = []
 asteroid_speed = 5
 spawn_timer = 0
 
+explosion_img = pygame.image.load("assets/UI/explosion.png").convert_alpha()
+explosions = []
 music_playing = False
 
 #variables
@@ -180,7 +182,7 @@ while True:#KEYBINDSSSS
                 if Starter_menu:
                     clck.play()
                     music_playing = False
-                    print("working")
+                    
                     pygame.time.delay(300)
                     fadeout()
                     screen.blit(bg,(30,40))
@@ -197,7 +199,7 @@ while True:#KEYBINDSSSS
                 
                 if space:
                     clck.play()
-                    print("THIS THING WORKDS")
+                    
                     Starter_menu = False
                     fadeout()
                     Game = True
@@ -210,7 +212,7 @@ while True:#KEYBINDSSSS
             elif event.key == pygame.K_r:
                 if game_over:
                     clck.play()
-                    print("THIS THING WORKs too")
+                    
                     Starter_menu = False
                     fadeout()
                     Game = True
@@ -287,19 +289,20 @@ while True:#KEYBINDSSSS
             location= 'Earth'
 
            
-        elif tme == 0:
-            tme = 0
-            game = False
-            game_over = True
-            music_playing = False
+        elif tme == 0 :
             win = True
+            Game = False
+            music_playing = False
+            game_over = True
+            
+
         #actual gameplay
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] or keys[pygame.K_UP]:
-            if player_rect.top > 0:
+            if player_rect.top > 50:
                 player_rect.y -= player_speed
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            if player_rect.bottom < 600:
+            if player_rect.bottom < 550:
                 player_rect.y += player_speed
             
     
@@ -329,23 +332,20 @@ while True:#KEYBINDSSSS
                 asteroids.remove(asteroid)
 
 
-        for bullet in bullets[:]:
-            for asteroid in asteroids[:]:
-                if bullet.colliderect(asteroid):  
-                    hit.play()
-                    bullets.remove(bullet)
-                    asteroids.remove(asteroid)
-                    break  
-
-
-        for asteroid in asteroids[:]:
-            if player_rect.colliderect(asteroid):  
-                lose = True
-                hit.play()
-                print("asteroid hit")
-                Game = False
-                music_playing = False
-                game_over = True
+        for bullet in bullets[:]: 
+            for asteroid in asteroids[:]: 
+                if bullet.colliderect(asteroid): 
+                    hit.play() 
+                    bullets.remove(bullet) 
+                    asteroids.remove(asteroid) 
+                    break 
+        for asteroid in asteroids[:]: 
+            if player_rect.colliderect(asteroid): 
+                lose = True 
+                hit.play() 
+                Game = False 
+                music_playing = False 
+                game_over = True 
                 break
 
         screen.blit(player, player_rect)  
@@ -357,8 +357,11 @@ while True:#KEYBINDSSSS
 
     elif game_over:
         location = 'Neptune'
+        Value = 7
         for asteroid in asteroids[:]:
             asteroids.remove(asteroid)
+        for bullet in bullets[:]:
+            bullets.remove(bullet)
         if win:
             wins +=1
             winscr()
@@ -377,7 +380,6 @@ while True:#KEYBINDSSSS
         
         
 
-        
 
 
     pygame.display.update()
